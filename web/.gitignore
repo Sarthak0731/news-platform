@@ -1,0 +1,22 @@
+# Node
+node_modules/
+npm-debug.log*
+yarn-error.log*
+
+# Next.js
+.next/
+out/
+
+# Environment variables
+.env
+.env.local
+.env.production
+.env.development
+
+# Firebase / secrets
+serviceAccount.json
+firebase-adminsdk*.json
+
+# OS
+.DS_Store
+Thumbs.db
