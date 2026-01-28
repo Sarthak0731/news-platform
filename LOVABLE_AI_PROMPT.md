@@ -12,7 +12,7 @@
 
 ## 🎯 Key Features to Design
 
-### 1. **Homepage - Latest News Feed**
+### 1. **Homepage - Latest News Feed (All Regions, All Categories)**
 - **Layout:** Masonry/grid layout with article cards
 - **Key Elements:**
   - Large hero section highlighting top trending story
@@ -31,44 +31,73 @@
   - Dark mode toggle (persist preference)
   - Search functionality (optional enhancement)
   - Responsive design (mobile, tablet, desktop)
+- **Navigation on Home:**
+  - Region selector dropdown (US, India, Europe, Global)
+  - Category navigation (dynamically loaded from API)
 
 ### 2. **Navigation & Header**
-- **Top Navigation Bar:**
-  - Logo/brand name on left ("📰 News Platform")
+- **Top Navigation Bar (on Homepage & Region Pages):**
+  - Logo/brand name on left ("📰 News Platform") - clickable, goes to home
   - Region selector dropdown (US, India, Europe, Global)
   - Category navigation (dynamically loaded from API)
   - Dark mode toggle button (top right)
   - Sticky header that stays visible while scrolling
+- **Top Navigation Bar (on Category Pages Only):**
+  - Logo/brand name on left ("📰 News Platform") - clickable, goes to home
+  - **NO region selector** (hidden/removed)
+  - Category name/breadcrumb shown prominently
+  - Dark mode toggle button (top right)
+  - Sticky header that stays visible while scrolling
 - **Mobile Menu:**
-  - Hamburger menu for regions and categories
+  - Hamburger menu for regions and categories (not shown on category pages)
   - Smooth slide-out drawer animation
   - Touch-friendly buttons and spacing
 
 ### 3. **Category Pages** (`/category/[category]`)
-- **Layout:** Similar to homepage but filtered by category
-- **Features:**
-  - Page title showing selected category
-  - Filter pills showing active filters
-  - Breadcrumb navigation (Home > Category Name)
-  - Same article card layout as homepage
-  - Category-specific color coding/theming
+- **Layout:** Article grid filtered by category, showing articles from ALL regions combined
+- **Key Features:**
+  - Page title: "Category Name" (e.g., "Technology News")
+  - Breadcrumb navigation: Home (logo clickable) > Category Name
+  - **NO region filter dropdown** on this page
+  - Articles displayed in grid/masonry layout
+  - Category badge prominently displayed
+  - Region indicators visible on each article card (to show which region the news is from)
+  - Pagination or infinite scroll
+  - Loading and error states
+  - Article cards showing: title, summary, region flag, source, date
+- **Navigation Back:**
+  - To view a specific region's news again: User must click home logo, then navigate to that region
+  - No direct navigation from category page to region page
 
 ### 4. **Region-Specific Pages** (`/news/[region]`)
-- **Layout:** News filtered by selected region
-- **Features:**
-  - Region header with flag and name
-  - Regional weather/time display (optional)
-  - Featured stories section (top 3-5 stories)
-  - Category breakdown showing top stories per category
-  - Regional color theme/accent colors
+- **Layout:** Two-column or grid layout showing all categories for that region
+- **Key Features:**
+  - Region header with flag, name, and theme color for that region
+  - Grid/showcase of all available categories:
+    - Each category as a card/section showing:
+      - Category name
+      - Latest article count or featured articles
+      - Click to view category news for that specific region
+  - Featured stories section (top 3-5 stories from that region across all categories)
+  - All categories visible - user can pick which category to explore within this region
+  - Sticky header with region name and back-to-home option
+- **Navigation on Region Page:**
+  - Home logo (top left) - goes back to homepage
+  - No category dropdown (instead, categories shown as cards/sections below)
+  - Can select any category to view that category's news in this specific region
+  - Can click region selector to switch to a different region
 
 ### 5. **Region + Category Pages** (`/news/[region]/[category]`)
-- **Layout:** Double-filtered view (region AND category)
-- **Features:**
-  - Breadcrumb: Home > Region > Category
-  - Applied filters display
-  - Refined article list
-  - "View all in region" and "View all in category" links
+- **Layout:** Filtered article list for specific region AND category
+- **Key Features:**
+  - Breadcrumb: Home > Region Name > Category Name
+  - Applied filters display prominently
+  - Region name shown in header with color theme
+  - Category badge shown
+  - Refined article list (only from selected region + selected category)
+  - Link to: "View all in [Region]" → takes to region page
+  - Link to: "View all in [Category]" → takes to category page (all regions)
+  - Back navigation works intuitively based on how user got here
 
 ---
 
@@ -153,11 +182,70 @@
 └─────────────────────────────────────────┘
 ```
 
-### Navigation Component
+### Navigation Component - Homepage & Region Pages
 ```
-┌────────────────────────────────────────────────────┐
-│ 📰 News Platform  [Region ▼] [Category ▼]  [🌙]  │
-└────────────────────────────────────────────────────┘
+┌────────────────────────────────────────────────────────┐
+│ 📰 News Platform  [Region ▼] [Category ▼]     [🌙]    │
+└────────────────────────────────────────────────────────┘
+```
+
+### Navigation Component - Category Pages (No Region Selector)
+```
+┌────────────────────────────────────────────────────────┐
+│ 📰 News Platform  [Category Name]           [🌙]      │
+└────────────────────────────────────────────────────────┘
+```
+
+### Region Page Layout - Category Showcase
+```
+┌─────────────────────────────────────────────────────────┐
+│  🇺🇸 US News                                            │
+├─────────────────────────────────────────────────────────┤
+│                                                         │
+│  ┌──────────────┐  ┌──────────────┐  ┌──────────────┐ │
+│  │  Technology  │  │   Business   │  │   Sports     │ │
+│  │  • 124 news  │  │  • 89 news   │  │  • 156 news  │ │
+│  │              │  │              │  │              │ │
+│  │ [Featured    │  │ [Featured    │  │ [Featured    │ │
+│  │  article]    │  │  article]    │  │  article]    │ │
+│  └──────────────┘  └──────────────┘  └──────────────┘ │
+│  ┌──────────────┐  ┌──────────────┐  ┌──────────────┐ │
+│  │   Health    │  │   Politics    │  │ Entertainment│ │
+│  │  • 78 news  │  │  • 203 news   │  │  • 145 news  │ │
+│  │              │  │              │  │              │ │
+│  │ [Featured    │  │ [Featured    │  │ [Featured    │ │
+│  │  article]    │  │  article]    │  │  article]    │ │
+│  └──────────────┘  └──────────────┘  └──────────────┘ │
+│                                                         │
+├─────────────────────────────────────────────────────────┤
+│ Featured Stories from US                                │
+│ [Article 1] [Article 2] [Article 3]                    │
+└─────────────────────────────────────────────────────────┘
+```
+
+### Category Page Layout (All Regions Combined)
+```
+┌─────────────────────────────────────────────────────────┐
+│ Technology News                                         │
+│ Home > Technology                                       │
+├─────────────────────────────────────────────────────────┤
+│                                                         │
+│ ┌──────────────────────────────────────────────────┐  │
+│ │ [Tech Article 1]                  🇺🇸 US         │  │
+│ │ Summary...                        📰 TechCrunch  │  │
+│ └──────────────────────────────────────────────────┘  │
+│                                                         │
+│ ┌──────────────────────────────────────────────────┐  │
+│ │ [Tech Article 2]                  🇮🇳 India      │  │
+│ │ Summary...                        📰 TheHindu    │  │
+│ └──────────────────────────────────────────────────┘  │
+│                                                         │
+│ ┌──────────────────────────────────────────────────┐  │
+│ │ [Tech Article 3]                  🇪🇺 Europe     │  │
+│ │ Summary...                        📰 EuroNews    │  │
+│ └──────────────────────────────────────────────────┘  │
+│                                                         │
+└─────────────────────────────────────────────────────────┘
 ```
 
 ### Loading State
@@ -175,34 +263,119 @@
 
 ## ✨ Additional Features to Consider
 
-### 1. **Trending Section**
+### 1. **Category Showcase Grid** (CRITICAL for Region Pages)
+- **Location:** On region pages (`/news/[region]`)
+- Grid/card layout showing all available categories for that region
+- Each category card displays:
+  - Category name
+  - Article count in that category for that region
+  - Optional featured article preview or icon/color
+  - Click to view that category's news for that specific region
+- Color-coded by category
+- Clickable to navigate to `/news/[region]/[category]`
+
+### 2. **Trending Section**
 - Horizontal scrollable list of trending stories
 - Mini cards showing just title and view count
 - "🔥 Trending" label
-
-### 2. **Category Showcase**
-- Grid of category cards with preview images/colors
-- Click to view category
-- Show article count per category
+- Can appear on homepage and region pages
 
 ### 3. **Breadcrumb Navigation**
-- "Home > Region > Category" navigation trail
-- Clickable breadcrumbs for easy navigation
+- Homepage: "Home > Region > Category" when on filtered pages
+- Clickable breadcrumbs for navigation back
+- Home logo always clickable to return to homepage
+- Shows current filter chain
 
 ### 4. **Search Bar** (optional)
 - Prominent search input on homepage
 - Search suggestions dropdown
 - Recent searches (stored in localStorage)
+- Shows which region/category each result belongs to
 
-### 5. **Article Filtering**
-- Filter pills/chips showing active filters
-- "Clear all filters" button
-- Visual indication of active filters
+### 5. **Region/Category Links**
+- On category pages: Link to "View all US news", "View all India news", etc. (optional)
+- On region+category pages: Link to "View all [Category]" and "View all [Region]"
+- Clear visual indication of what these links do
 
 ### 6. **Pagination/Infinite Scroll**
 - Either numbered pagination or "Load more" button
 - Smooth scrolling to top after pagination
 - Current page indicator
+- Works for all filtered views (homepage, category, region, region+category)
+
+---
+
+## 🌐 SEO & Metadata Considerations
+- **Page Titles:** Descriptive, keyword-rich (auto-generated from data)
+- **Meta Descriptions:** Concise, 150-160 characters (auto-generated)
+- **Canonical URLs:** Prevent duplicate content
+- **Open Graph Tags:** For social media sharing with images
+- **Structured Data:** Schema markup for news articles
+
+*(Note: Already implemented in Next.js backend, design just needs to work with this)*
+
+---
+
+## 🔀 CRITICAL NAVIGATION LOGIC
+
+### Navigation Header Behavior
+
+**Page Type: Homepage (`/`)**
+- Show: Logo + Region Dropdown + Category Navigation + Dark Mode Toggle
+- Featured: Hero story + all articles from all regions and categories
+
+**Page Type: Region Page (`/news/[region]`)**
+- Show: Logo + Region Dropdown + Dark Mode Toggle
+- **Hide:** Category navigation dropdown (instead show category cards/grid below)
+- Featured: Region-specific header + Category showcase grid + Featured stories
+
+**Page Type: Category Page (`/category/[category]`)**
+- Show: Logo + Category Name/Breadcrumb + Dark Mode Toggle
+- **Hide:** Region dropdown completely (not visible)
+- Featured: Category-specific articles from ALL regions with region badges visible on each card
+
+**Page Type: Region+Category Page (`/news/[region]/[category]`)**
+- Show: Logo + Breadcrumb (Home > Region > Category) + Dark Mode Toggle
+- **Hide:** Region dropdown and category navigation dropdown
+- Featured: Double-filtered articles + Links to "View all [Region]" and "View all [Category]"
+
+### Key Navigation Rules
+
+1. **From Category Page to Region View:**
+   - User CANNOT directly switch regions
+   - User must: Click Home Logo → Returns to homepage → Select region → Browse region's categories
+   - This prevents confusion between "all regions" and "one region" views
+
+2. **From Region Page to Category View:**
+   - User can select a category from the category showcase grid
+   - Takes to `/news/[region]/[category]` (specific region + specific category)
+   - OR can click home logo and select category from homepage to view all regions
+
+3. **Category Page Features:**
+   - Shows articles from ALL regions combined
+   - Region badge on each card indicates source region
+   - No region filter available (intentional design choice)
+   - User can see global perspective of that topic
+
+4. **Region Page Features:**
+   - Shows all categories available for that region
+   - Category cards/grid showcase all options
+   - Featured articles from that region
+   - Can switch regions without returning to home
+
+5. **Home Logo Behavior:**
+   - Available on ALL pages
+   - Always returns to homepage
+   - Resets all filters (shows all regions + all categories)
+
+### URL Structure Mapping
+
+| Page Type | URL | Nav Bar | Key Feature |
+|-----------|-----|---------|------------|
+| Home | `/` | Region ▼ + Category ▼ | All regions, all categories |
+| Region | `/news/us` | Region ▼ (no category ▼) | Category showcase grid, region-specific |
+| Category | `/category/tech` | Category name (no region ▼) | All regions combined, global view |
+| Region+Cat | `/news/us/tech` | Breadcrumb only | Specific region + category combination |
 
 ---
 
@@ -252,28 +425,60 @@
 
 ## 🎬 User Flows
 
-### Primary Flow: View Latest News
+### Primary Flow: View Latest News (All Regions, All Categories)
 1. User lands on homepage
-2. Sees hero story + article grid
-3. Scrolls through articles
-4. Clicks article → opens in new tab (external link)
+2. Sees hero story + article grid (all regions, all categories)
+3. Header shows region dropdown + category navigation
+4. Scrolls through articles with region and category badges visible
+5. Clicks article → opens in new tab (external link)
 
-### Secondary Flow: Browse by Region
-1. User clicks region dropdown
-2. Selects region (US, India, Europe, Global)
-3. Page filters to show only that region's news
-4. Breadcrumb updates, title changes
+### Flow A: Browse News by Region
+1. User on homepage clicks region dropdown (e.g., "US")
+2. Navigates to `/news/us` (region page)
+3. Sees region header with flag and themed color
+4. Below: Grid/showcase of all available categories
+5. Featured articles section from that region
+6. User can click any category card to see that category's news FOR THAT REGION ONLY
+7. Navigation bar shows: Home logo, region name (no category dropdown)
+8. To switch region: Use region dropdown
+9. To view category across ALL regions: Must click home logo first, then click category
 
-### Tertiary Flow: Browse by Category
-1. User clicks category from navigation
-2. Sees articles filtered to that category
-3. Can further filter by region
-4. Can see category-specific styling
+### Flow B: Browse News by Category (All Regions Combined)
+1. User on homepage clicks category from navigation (e.g., "Technology")
+2. Navigates to `/category/technology`
+3. Sees category page with articles from ALL REGIONS combined
+4. Page title: "Technology" 
+5. Breadcrumb: Home Logo > Technology
+6. Navigation bar shows: Home logo, category name (NO region dropdown)
+7. Each article card still shows its region (US flag, India flag, etc.)
+8. User sees all technology news globally
+9. **To view same category for a specific region:**
+   - Must click home logo to return to homepage
+   - Then select region from dropdown
+   - Then browse that region's categories and click the specific category
+   - This takes to `/news/[region]/[category]`
+
+### Flow C: Browse Specific Region + Specific Category
+1. User on region page (`/news/us`) clicks a category card
+2. Navigates to `/news/us/technology` (region + category)
+3. Sees only US technology articles
+4. Breadcrumb: Home Logo > US > Technology
+5. Shows links: "View all US news" and "View all Technology news"
+6. Can navigate back to region by clicking breadcrumb or "View all US news"
+7. To see that category from another region: Must go home first
+
+### Flow D: Return Navigation from Category to Region
+1. User is on category page (`/category/technology`)
+2. To switch to a region's view: Click home logo (📰)
+3. Returned to homepage with all regions + all categories
+4. Then select desired region from dropdown
+5. Then select category from that region
+6. Now on `/news/[region]/[category]` specific filtered view
 
 ### Search Flow (optional)
-1. User clicks search bar
+1. User clicks search bar on any page
 2. Types keyword
-3. Sees article suggestions
+3. Sees article suggestions (shows region and category)
 4. Clicks result → navigates to article
 
 ---
