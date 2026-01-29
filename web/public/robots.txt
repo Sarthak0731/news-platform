@@ -1,0 +1,12 @@
+User-agent: *
+Allow: /
+Allow: /category/*
+Allow: /news/*
+Allow: /api/sitemap
+
+Disallow: /admin
+Disallow: /*.json
+Disallow: /api/*
+
+Sitemap: https://news-platform.com/sitemap.xml
+Crawl-delay: 1

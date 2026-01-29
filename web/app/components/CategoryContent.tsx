@@ -1,21 +1,22 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { Metadata } from 'next';
-import { fetchLatestNews, Article } from '@/lib/api';
-import ArticleCard from './components/ArticleCard';
+import { fetchCategoryNews, Article } from '@/lib/api';
+import ArticleCard from '@/app/components/ArticleCard';
 
-// Note: This is a client component, but we'll add metadata export below
-export default function Home() {
+export default function CategoryContent({ params }: { params: { category: string } }) {
   const [articles, setArticles] = useState<Article[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+
+  const category = decodeURIComponent(params.category);
+  const formattedCategory = category.charAt(0).toUpperCase() + category.slice(1);
 
   useEffect(() => {
     const loadNews = async () => {
       try {
         setLoading(true);
-        const data = await fetchLatestNews();
+        const data = await fetchCategoryNews(category);
         setArticles(data.articles);
       } catch (err) {
         setError(err instanceof Error ? err.message : 'Failed to load news');
@@ -25,16 +26,16 @@ export default function Home() {
     };
 
     loadNews();
-  }, []);
+  }, [category]);
 
   return (
     <main className="max-w-4xl mx-auto px-4 py-8">
       <div className="mb-8">
         <h1 className="text-4xl font-bold text-black dark:text-white mb-2">
-          Latest News
+          {formattedCategory} News
         </h1>
         <p className="text-gray-600 dark:text-gray-400">
-          All regions • All categories • Latest first
+          Global news in {formattedCategory} • All regions • Latest first
         </p>
       </div>
 
@@ -52,8 +53,10 @@ export default function Home() {
       )}
 
       {!loading && articles.length === 0 && (
-        <div className="text-center py-12">
-          <p className="text-gray-600 dark:text-gray-400">No news available</p>
+        <div className="text-center py-12 bg-gray-50 dark:bg-gray-900 rounded-lg p-8">
+          <p className="text-gray-600 dark:text-gray-400">
+            No {formattedCategory.toLowerCase()} news available
+          </p>
         </div>
       )}
 

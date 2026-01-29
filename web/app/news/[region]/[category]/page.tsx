@@ -1,64 +1,48 @@
-import { fetchNews, type Article } from "@/lib/api";
+import RegionCategoryContent from '@/app/components/RegionCategoryContent';
 
-interface PageProps {
-  params: Promise<{
-    region: string;
-    category: string;
-  }>;
+const REGION_MAP: Record<string, string> = {
+  'us': 'US',
+  'usa': 'US',
+  'india': 'India',
+  'europe': 'Europe',
+  'eu': 'Europe',
+  'uk': 'Europe',
+  'global': 'Global',
+};
+
+export async function generateMetadata({ params }: { params: Promise<{ region: string; category: string }> }) {
+  const { region, category } = await params;
+  const regionSlug = decodeURIComponent(region);
+  const categorySlug = decodeURIComponent(category);
+  const displayRegion = REGION_MAP[regionSlug.toLowerCase()] || regionSlug;
+  const displayCategory = categorySlug.charAt(0).toUpperCase() + categorySlug.slice(1);
+
+  return {
+    title: `${displayCategory} News in ${displayRegion} | News Platform`,
+    description: `Latest ${displayCategory} news from ${displayRegion}. Get real-time updates and breaking news about ${displayCategory} developments in ${displayRegion}.`,
+    keywords: [`${displayCategory}`, `${displayRegion}`, `${displayCategory} news ${displayRegion}`, `${displayRegion} ${displayCategory}`, `latest ${displayCategory} in ${displayRegion}`],
+    openGraph: {
+      title: `${displayCategory} News in ${displayRegion}`,
+      description: `Latest ${displayCategory} news from ${displayRegion}`,
+      url: `https://news-platform.com/news/${regionSlug}/${categorySlug}`,
+      type: 'website',
+    },
+    twitter: {
+      card: 'summary_large_image',
+      title: `${displayCategory} News in ${displayRegion}`,
+      description: `Latest ${displayCategory} news from ${displayRegion}`,
+    },
+    alternates: {
+      canonical: `https://news-platform.com/news/${regionSlug}/${categorySlug}`,
+    },
+  };
 }
 
-export default async function NewsPage({ params }: PageProps) {
-  const { region, category } = await params;
-  const data = await fetchNews(region, category);
-
-return (
-  <main style={{ maxWidth: "900px", margin: "0 auto", padding: "24px" }}>
-    <header style={{ marginBottom: "32px" }}>
-      <h1 style={{ fontSize: "28px", fontWeight: "bold" }}>
-        {category.toUpperCase()} News in {region.toUpperCase()}
-      </h1>
-      <p style={{ color: "#666" }}>
-        {data.count} latest verified articles
-      </p>
-    </header>
-
-    <section>
-      {data.articles.map((article: Article) => (
-        <article
-          key={article.uid}
-          style={{
-            borderBottom: "1px solid #eaeaea",
-            paddingBottom: "20px",
-            marginBottom: "20px",
-          }}
-        >
-          <h2
-            style={{ fontSize: "18px", marginBottom: "8px" }}
-            dangerouslySetInnerHTML={{ __html: article.title }}
-          />
-
-          <p style={{ fontSize: "14px", color: "#555" }}>
-            <strong>{article.source}</strong> •{" "}
-            {new Date(article.publishedAt).toLocaleDateString()}
-          </p>
-
-          <a
-            href={article.sourceUrl}
-            target="_blank"
-            rel="noopener noreferrer"
-            style={{
-              display: "inline-block",
-              marginTop: "8px",
-              color: "#0066cc",
-              textDecoration: "none",
-              fontWeight: "500",
-            }}
-          >
-            Read full article →
-          </a>
-        </article>
-      ))}
-    </section>
-  </main>
-);
+export default async function RegionCategoryPage({
+  params,
+}: {
+  params: Promise<{ region: string; category: string }>;
+}) {
+  const resolvedParams = await params;
+  return <RegionCategoryContent params={resolvedParams} />;
 }
